@@ -1,0 +1,61 @@
+%-----------------------------------------------------------------------------------------------------
+% AUTHOR: Soumitra Samanta (soumitra.samanta@gm.rkmvu.ac.in)
+%-----------------------------------------------------------------------------------------------------
+
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or epsÂ§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{enumitem}% http://ctan.org/pkg/enumitem
+\usepackage{hyperref} 
+
+%SetFonts
+
+%SetFonts
+
+\title{Your project title}
+\author{Group name\\
+Your name}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+
+\section*{Abstract}
+
+Project summary in 8-10 sentences (max 100 words).
+
+\section{Introduction}
+A brief description of your project (you should explain about your project to answer what?, why? and how?) with some literature survey.
+
+\section{Proposed methodology}
+Here is your proposed method to tackle the above problem. 
+
+\section{Work plan and time line}
+
+You should mention a time line for different parts of your project. Something like \href{https://en.wikipedia.org/wiki/Gantt_chart}{Gantt chart}, you can use Excel to draw your Gantt chart~\url{https://support.microsoft.com/en-us/office/present-your-data-in-a-gantt-chart-in-excel-f8910ab4-ceda-4521-8207-f0fb34d9e2b6} 
+
+
+\section{Work plan division in your group}
+
+Who will do what in your project?
+
+\section{References}
+
+Some references related to your project. I am attaching a \textit{ml\_reference.bib} file and you can use that. You have to add your \textit{bibtex} according to your references {like conference, journal, book, etc.}. Your reference section should be some like bellow:
+
+
+\nocite{*}% Biblography without citation!
+	
+\bibliography{ml_reference} % .bib file
+\bibliographystyle{plain}
+
+
+\end{document}  
