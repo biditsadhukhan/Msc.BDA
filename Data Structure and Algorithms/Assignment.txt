@@ -1,0 +1,14 @@
+Problem: A Robot positioned at the entry point of a maze will have to find its way to the exit point. 
+Task: Write an algorithm to achieve this. A sample maze is given below.
+Maze Encoding: Treat this maze as a two dimensional array of size mXn having values 1 or 0. The robot can move only along 1s and stops on getting a zero in the cell ahead. "Ahead" means the next cell along the moving direction.
+Input: x,y the entry cell coordinate where the robot is stationed
+Basic Robot Commands: 
+
+Right to turn right
+Left to turn left
+Turn for about turn
+Move moves ahead
+Write(x) writes x in the current cell
+Read reads the current cell value
+Any other primitive which you deem fit
+Refer to mazeimg-assignment file
