@@ -1,0 +1,401 @@
+---
+title: "Assignment-2"
+author: "Bidit Sadhukhan"
+format: pdf
+toc-depth: 6
+table-of-contents: true
+---
+
+# Info
+
+-   **Name:** *Bidit Sadhukhan*
+
+-   **Reg.No:** *B2230022*
+
+-   **University:** *RKMVERI*
+
+-   **Subject:** *Econometrics*
+
+## Question-01
+
+```{r}
+# Importing the libraries
+library(knitr)
+library(Metrics)
+library(dplyr)
+library(vars)
+```
+
+-   Making the Dataframe
+
+```{r}
+
+# Define the data
+time_points <- 1:12
+actual_values <- c(3, 7, -4, -6, 1, 9, -3, -7, 1, 9, -3, -7)
+forecast_1 <- c(2, 4, -3, -4, 0, 12, -6, -4, 4, 15, -1, -11)
+forecast_2 <- c(7, 9, -8, -10, 7, 9, -8, -10, 7, 9, -8, -10)
+
+# Create a dataframe
+data <- data.frame(
+  time_points,
+  actual_values,
+  forecast_1,
+  forecast_2,row.names = NULL
+)
+
+# Print the dataframe
+# Convert to kable table
+kable(data, caption = "Data Table")
+```
+
+## 1(a) Which forecasting method is better and why?
+
+```{r}
+
+# Calculate bias and MSE for forecast 1
+forecast_1_bias <- mean(data$actual_values - data$forecast_1)
+forecast_1_mse <- mean((data$actual_values - data$forecast_1)^2)
+
+# Calculate bias and MSE for forecast 2
+forecast_2_bias <- mean(data$actual_values - data$forecast_2)
+forecast_2_mse <- mean((data$actual_values - data$forecast_2)^2)
+
+# Calculate bias and MSE for each forecast
+comp <- data.frame(
+  Forecast = c("1", "2"),
+  Bias = c(forecast_1_bias, forecast_2_bias),
+  MSE = c(forecast_1_mse, forecast_2_mse)
+)
+
+# Convert to kable table
+kable(comp, caption = "Bias and MSE for Forecast 1 and Forecast 2")
+
+
+
+
+```
+
+**Bias:**
+
+-   **Forecast 1:** Bias is **negative**, indicating the forecast consistently underestimates the actual values.
+
+-   **Forecast 2:** Bias is **positive**, meaning the forecast overestimates the actual values.
+
+In general, a **bias close to zero is desirable**. While a negative bias can be compensated for by adding a constant to the forecast, a positive bias might lead to inaccurate predictions and potential issues depending on the context.
+
+**MSE:**
+
+-   **Forecast 1:** MSE is **9**, indicating a lower average squared error.
+
+-   **Forecast 2:** MSE is **16**, showing a higher average squared error.
+
+**MSE measures the average squared difference between the actual and predicted values**, representing the average prediction error. Therefore, a **lower MSE indicates a better fit to the actual values**.
+
+**Decision:**
+
+-   Therefore, the best forecast depends on specific priorities:
+
+    -   **If minimizing bias is main concern:** Choose forecast 2.
+
+    -   **If minimizing MSE is main concern:** Choose forecast 1.
+
+## 1(b) Compute all the forecast errors for both the methods.
+
+-   **MAE:** Mean Absolute Error
+
+-   **MSE:** Mean Squared Error
+
+-   **RMSE:** Root Mean Squared Error
+
+-   **MAPE:** Mean Absolute Percentage Error
+
+-   **SMAPE:** Symmetric Mean Absolute Percentage Error
+
+```{r}
+# Calculate error measures
+error_measures <- data.frame(
+  Measure = c("MAE", "MSE", "RMSE", "MAPE", "SMAPE"),
+  Forecast1 = c(mae(actual_values, forecast_1),
+                   mse(actual_values, forecast_1),
+                   rmse(actual_values, forecast_1),
+                   mape(actual_values, forecast_1),
+                   smape(actual_values, forecast_1)),
+  Forecast2 = c(mae(actual_values, forecast_2),
+                   mse(actual_values, forecast_2),
+                   rmse(actual_values, forecast_2),
+                   mape(actual_values, forecast_2),
+                   smape(actual_values, forecast_2))
+)
+
+# Convert to kable table
+kable(error_measures, caption = "Error Measures for Forecast 1 and Forecast 2")
+```
+
+## 1(c) Compute the forecast errors only using the last four observations.
+
+```{r}
+# Define the last four observations
+last_four_time_points <- tail(time_points, 4)
+last_four_actual_values <- tail(actual_values, 4)
+last_four_forecast_1_values <- tail(forecast_1, 4)
+last_four_forecast_2_values <- tail(forecast_2, 4)
+
+# Create a new data frame with forecast errors
+last_four_errors_data <- data.frame(
+  time_points = last_four_time_points,
+  actual_values = last_four_actual_values,
+  forecast_1 = last_four_forecast_1_values,
+  forecast_2 = last_four_forecast_2_values,
+  row.names = NULL
+)
+
+# Print the data frame
+# Convert to kable table
+kable(last_four_errors_data, caption = "Data for Forecast 1 and Forecast 2 (Last Four Observations)")
+
+```
+
+```{r}
+
+
+# Calculate error measures for last four observations
+error_measures_last_four <- data.frame(
+  Measure = c("MAE", "MSE", "RMSE", "MAPE", "SMAPE"),
+  Forecast1 = c(
+    mae(last_four_actual_values, last_four_forecast_1_values),
+    mse(last_four_actual_values, last_four_forecast_1_values),
+    rmse(last_four_actual_values, last_four_forecast_1_values),
+    mape(last_four_actual_values, last_four_forecast_1_values),
+    smape(last_four_actual_values, last_four_forecast_1_values)
+  ),
+  Forecast2 = c(
+    mae(last_four_actual_values, last_four_forecast_2_values),
+    mse(last_four_actual_values, last_four_forecast_2_values),
+    rmse(last_four_actual_values, last_four_forecast_2_values),
+    mape(last_four_actual_values, last_four_forecast_2_values),
+    smape(last_four_actual_values, last_four_forecast_2_values)
+  )
+)
+
+# Calculate bias and MSE
+bias_forecast1_last_four <- abs(mean(last_four_actual_values - last_four_forecast_1_values))
+mse_forecast1_last_four <- mean((last_four_actual_values - last_four_forecast_1_values)^2)
+bias_forecast2_last_four <- abs(mean(last_four_actual_values - last_four_forecast_2_values))
+mse_forecast2_last_four <- mean((last_four_actual_values - last_four_forecast_2_values)^2)
+
+# Add bias and MSE to error_measures_last_four data frame
+error_measures_last_four <- rbind(
+  error_measures_last_four,
+  data.frame(
+    Measure = c("Bias", "MSE"),
+    Forecast1 = c(bias_forecast1_last_four, mse_forecast1_last_four),
+    Forecast2 = c(bias_forecast2_last_four, mse_forecast2_last_four)
+  )
+)
+
+# Print the error measures
+kable(error_measures_last_four, caption = "Error Measures for Forecast 1 and Forecast 2 (Last Four Observations)")
+
+
+
+```
+
+## 1(d) Forecast the values for t = 1, 2, · · · , 12 using a linear trend model, and compare it with the previous two methods.
+
+```{r}
+# Define time points
+time_points <- 1:12
+
+# Fit linear trend model
+lm_fit <- lm(actual_values ~ time_points)
+
+# Forecast values
+forecast_linear <- predict(lm_fit, newdata = data.frame(time_points = 1:12))
+
+# Compare forecasts
+comparison_data <- data.frame(
+  Time = 1:12,
+  Actual = actual_values,
+  Forecast1 = forecast_1,
+  Forecast2 = forecast_2,
+  ForecastLinear = forecast_linear
+)
+kable(comparison_data, caption = "Data with linear forecast")
+```
+
+```{r}
+# Calculate bias
+bias_forecast1 <- mean(comparison_data$Actual - comparison_data$Forecast1)
+bias_forecast2 <- mean(comparison_data$Actual - comparison_data$Forecast2)
+bias_linear <- mean(comparison_data$Actual - comparison_data$ForecastLinear)
+
+# Calculate variance
+variance_forecast1 <- var(comparison_data$Actual - comparison_data$Forecast1)
+variance_forecast2 <- var(comparison_data$Actual - comparison_data$Forecast2)
+variance_linear <- var(comparison_data$Actual - comparison_data$ForecastLinear)
+
+# Create data frame with bias and variance
+error_measures <- data.frame(
+  Measure = c("Bias", "Variance"),
+  Forecast1 = c(bias_forecast1, variance_forecast1),
+  Forecast2 = c(bias_forecast2, variance_forecast2),
+  Linear = c(bias_linear, variance_linear)
+)
+
+# Print kable table
+kable(error_measures, caption = "Bias and Variance of Forecast Methods")
+
+```
+
+Linear trend model has higher MSE than other 2 forecasts but it has bias zero.
+
+## 1.(e) Suppose you want to use simple exponential smoothing for forecasting. What will be the optimal value of smoothing parameter α if α assumes only two values 0.1 or 0.3.
+
+```{r}
+simple_exponential_smoothing <- function(series, alpha) {
+n <- length(series)
+forecast_values <- numeric(n)
+forecast_values[1] <- series[1]
+for (i in 2:n) {
+forecast_values[i] <- alpha * series[i - 1] + (1 - alpha) * forecast_values[i - 1]
+}
+return(forecast_values)
+}
+```
+
+```{r}
+# Define data and smoothing parameters
+data <- actual_values
+alpha_values <- c(0.1, 0.3)
+
+# Initialize empty lists for storing errors
+mse_errors <- list()
+
+# Loop through each smoothing parameter
+for (alpha in alpha_values) {
+  # Initialize forecast and error variables
+  forecast <- c(data[1])
+  errors <- vector("numeric", length(data))
+
+  # Calculate forecasts for remaining data points
+  for (i in 2:length(data)) {
+    forecast[i] <- alpha * data[i-1] + (1 - alpha) * forecast[i-1]
+    errors[i] <- data[i] - forecast[i]
+  }
+
+  # Calculate mean squared error
+  mse_error <- mean(errors^2)
+  
+  # Store MSE error
+  mse_errors[[paste0("alpha = ", alpha)]] <- mse_error
+}
+
+# Find the alpha with the minimum MSE
+min_mse_index <- which.min(unlist(mse_errors))
+optimal_alpha <- names(mse_errors)[min_mse_index]
+```
+
+-   The optimal Alpha value and the MSE value of the optimal alpha.
+
+```{r}
+# Print the results
+print(optimal_alpha)
+print(mse_errors[[optimal_alpha]])
+```
+
+## 1(f) What will be the value of S24, where St denotes the seasonality of yt at t?
+
+```{r}
+ts.plot(actual_values)
+# Define the period
+period <- 4
+
+detrendised_values=actual_values-forecast_linear
+# seasonality
+seasonal_component <- function(series, d, t) {
+s <- numeric(d)
+for (i in 1:d) {
+s[i] <- mean(series[seq(i,length(series),d)])
+}
+if (t%%d != 0) {
+return(s[t%%d])
+}
+else return(s[d])
+}
+
+# Calculate S24
+S24 <- seasonal_component(detrendised_values,4,24)
+
+# Print S24
+print(paste("S24:", S24))
+
+```
+
+## 1(g) Forecast the values t = 1, 2, · · · , 12 using an AR(4) model, and compare it with Method 1 and Method 2.
+
+```{r}
+
+# Detrending and deseasonalizing
+deseasonalised_detrendised_values <- detrendised_values - sapply(1:4, function(x) seasonal_component(detrendised_values, 4, x))
+
+# Fit AR(4) model
+ar_4_model <- arima(deseasonalised_detrendised_values, order = c(4, 0, 0))
+
+# Print AR(4) model coefficients
+print(ar_4_model$coef)
+
+# Forecast AR(4) values
+estimated_ar_4_values <- numeric(12)
+estimated_ar_4_values[1:4] <- deseasonalised_detrendised_values[1:4]
+
+for (i in 5:12) {
+  estimated_ar_4_values[i] <- sum(c(ar_4_model$coef) * c(rev(estimated_ar_4_values[seq(i - 4, i - 1, 1)]), 1))
+}
+
+# Add trend and seasonality to obtain final forecasts
+final_ar_4_values <- estimated_ar_4_values + forecast_linear + sapply(1:4, function(x) seasonal_component(detrendised_values, 4, x))
+
+# Print final AR(4) values
+print(final_ar_4_values)
+
+# Create a data frame with actual and forecast values
+comparison_data <- data.frame(
+  Time = 1:12,
+  Actual = actual_values,
+  Forecast1 = forecast_1,
+  Forecast2 = forecast_2,
+  ForecastAR4 = final_ar_4_values
+)
+
+# Print kable table
+kable(comparison_data, caption = "Actual vs. AR(4) Forecast Values")
+
+
+# Calculate MSE
+mse <- mse(actual_values, final_ar_4_values)
+print(paste0("MSE for AR(4) model:", mse))
+
+```
+
+```{r}
+# Calculate bias
+bias_ar4 <- mean(comparison_data$Actual - comparison_data$ForecastAR4)
+
+# Calculate variance
+variance_ar4 <- var(comparison_data$ForecastAR4 - comparison_data$Actual)
+
+# Create data frame with bias and variance
+error_measures <- data.frame(
+  Measure = c("Bias", "Variance"),
+  Forecast1 = c(forecast_1_bias, forecast_1_mse),
+  Forecast2 = c(forecast_2_bias, forecast_2_mse),
+  AR4 = c(bias_ar4, variance_ar4)
+)
+
+# Print kable table
+kable(error_measures, caption = "Bias and Variance of Forecast Methods")
+
+```
+
+**AR(4) is giving lower MSE and bias than the other methods , so AR(4) is better.**
