@@ -1,0 +1,255 @@
+---
+title: "Canonical Correlation Analysis"
+author: "Bidit Sadhukhan, Anirban Dey"
+format: beamer
+editor: visual
+theme: Berlin
+institute: "Ramkrishna Mission Vivekananda Educational Research Institute"
+incremental: true
+fig-align: right
+---
+
+## Motivation
+
+Suppose there is a firm that surveyed a random sample of *n* = 50 of its employees in an attempt to determine which factors influence sales performance. Two collections of variables were measured:
+
+::: nonincremental
+-   Sales Performance:
+    -   Sales Growth
+
+    -   Sales Profitability
+
+    -   New Account Sales
+-   Test Scores as a Measure of Intelligence
+    -   Creativity
+    -   Mechanical Reasoning
+    -   Abstract Reasoning
+    -   Mathematics
+:::
+
+## Correlation Matrix
+
+There are *p* = 3 variables in the first group relating to Sales Performance and *q* = 4 variables in the second group relating to Test Scores.
+
+```{r,out.height=6,out.width=2}
+# Load required libraries
+library(MASS)
+library(knitr)
+library(ggplot2)
+library(GGally)
+library(CCA)
+
+# Set the working directory and read the data
+sales <- read.csv("sales.csv")
+
+# Define the variables for each set
+sales_vars <- sales[, c("growth", "profit", "new")]
+test_scores <- sales[, c("create", "mech", "abs", "math")]
+m=matcor(sales_vars,test_scores)
+kable(round(m$XYcor,2))
+```
+
+## Correlation Plots for Sales Data
+
+```{r,fig.height=3.8,fig.width=7}
+#Print the correlation
+library(corrplot)
+# Assuming you have already computed the correlation matrix and rounded it
+ggcorr(sales, method = c("everything", "pearson"))
+```
+
+## Motivation for large p & q
+
+-   What if p and q are large? There will be pq such scatter plots and a correlation matrix of pq dimension.
+
+-   How can we interpret for large p,q?
+
+## Purpose
+
+Canonical Correlation Analysis (CCA) connects two sets of variables by finding linear combinations of variables that maximally correlate.
+
+-   Data reduction: explain covariation between two sets of variables using small number of linear combinations
+-   Data interpretation: find features (i.e., canonical variates) that are important for explaining covariation between sets of variables
+
+## Canonical Variates- Notations
+
+Notations: $$\mathbf{X} = [X_1, X_2, \ldots, X_p]^T$$
+
+$$\mathbf{Y} = [Y_1, Y_2, \ldots, Y_q]^T$$ and $p\leq q$ .
+
+Define: $$U=a^TX$$ & $$V=b^TY$$
+
+## Canonical Variates
+
+$U$ and $V$ are called Canonical Variates
+
+-   $(U_1,V_1)$ is called as the first canonical covariate pair
+-   $(U_i,V_i)$ is the $i^{th}$ canonical covariate pair.
+-   $p\leq q$, there are p canonical covariate pair.
+
+## Canonical Variates- Properties
+
+-   $E(X)=\mu_x$, $Cov(X)=\Sigma_x$ then $$E(U)=E(a^TX)=a^T\mu_x$$ $$Cov(U)=Cov(a^TX)=a^T\Sigma_xa$$
+-   $E(Y)=\mu_y$, $Cov(Y)=\Sigma_y$ then $$E(V)=E(b^TY)=b^T\mu_y$$ $$Cov(V)=Cov(b^TX)=b^T\Sigma_yb$$
+-   $Cov(X,Y)=\Sigma_{xy}$ then $Cov(U,V)=a^T\Sigma_{xy}b$
+
+## Relation between Canonical Covariates & Original
+
+-   $$Cor(X,Y)=\rho_{xy}=\frac{\text{Cov}(XY)}{\sqrt{\text{var}(X)} \cdot {\sqrt{\text{Var}(Y)}}}$$
+-   $$Cor(U,V)=\rho_{uv}=\frac{\text{Cov}(UV)}{\sqrt{\text{Var}(U)} \cdot {\sqrt{\text{Var}(V)}}}=\frac{a^T\Sigma_{xy}b}{\sqrt{a^T\Sigma_xa}\cdot{\sqrt{b^T\Sigma_yb}}}$$
+
+## Canonical Variates Defined
+
+**First Canonical Covariate:**
+
+-   Define $$U_1 = a_1^TX$$ $$V_1 = b_1^TY$$\
+-   Conditions
+
+1.  $$\text{Var}(U_1) = \text{Var}(V_1) = 1$$
+2.  $$\rho^*_1(U_1, V_1) = \max_{a, b} \rho(a^TX, b^TY)$$ $(U_1,V_1)$ is the first pair of canonical variable.
+
+## Second Canonical Covariate
+
+::: nonincremental
+-   Define $$U_2 = a_2^TX$$ $$V_2 = b_2^TY$$\
+-   Conditions
+
+1.  $$\text{Var}(U_2) = \text{Var}(V_2) = 1$$
+2.  $$\rho^*_2(U_2, V_2) = \max_{a, b} \rho(a^TX, b^TY)$$
+3.  $$Cov(U_1, U_2) = Cov(V_1,V_2)=0$$
+4.  $$Cov(U_1,V_2)=Cov(U_2,V_1)=0$$
+:::
+
+$(U_2,V_2)$ is the second pair of canonical variable.
+
+## i-th canonical covariate
+
+::: nonincremental
+-   Define $$U_i = a_i^TX$$ $$V_i = b_i^TY$$\
+-   Conditions
+
+1.  $$\text{Var}(U_i) = \text{Var}(V_i) = 1$$
+2.  $$\rho^*_i(U_i, V_i) = \max_{a, b} \rho(a^TX, b^TY)$$
+3.  $$Cov(U_i, U_k) = Cov(V_i,V_k)=0$$
+4.  $$Cov(U_i,V_k)=Cov(U_k,V_i)=0$$ $\forall k\neq i$
+
+$(U_i,V_i)$ is the $i_{th}$ pair of canonical variable.
+:::
+
+## The i-th pair of canonical variates is given by
+
+$$U_i = e^T_{i}\Sigma^{-1/2}_XX \quad \text{(represented as } a^T_{i}X \text{)}$$ $$V_i = f^T_{i}\Sigma^{-1/2}_YY \quad \text{(represented as } b^T_{i}Y \text{)}$$ where:
+
+-   $e_i$ is the $i_{th}$ eigenvector of $\Sigma^{-1/2}_X \Sigma_{XY}\Sigma^{-1}_Y \Sigma_{YX}\Sigma^{-1/2}_X$
+-   $f_i$ is the $i_{th}$ eigenvector of $\Sigma^{-1/2}_Y \Sigma_{YX}\Sigma^{-1}_X \Sigma_{XY}\Sigma^{-1/2}_Y$
+
+The $i_{th}$ canonical correlation is given by:
+
+$$Cor(U_i , V_i ) = \rho_i^*$$ where $\rho^{*2}_i$ is the $i_{th}$ eigenvalue of $\Sigma^{-1/2}_X \Sigma_{XY}\Sigma^{-1}_Y \Sigma_{YX}\Sigma^{-1/2}_X$ Note: $\rho^{*2}_i$ is also the $i_{th}$ eigenvalue of $\Sigma^{-1/2}_Y \Sigma_{YX}\Sigma^{-1}_X \Sigma_{XY}\Sigma^{-1/2}_Y$
+
+## Properties of Canonical Variates
+
+Define: $Corr(U_i,V_i)=\rho_i^*$,   $\ni$ $i=1...p$,   & $p\leq q$
+
+-   $\rho_{i}^{*2}\leq \rho^{*2}_{i-1} \leq \rho^{*2}_{i-2} ...\rho^{*2}_3\leq \rho^{*2}_2 \leq \rho^{*2}_1$
+-   $\rho^{*2}_i,\rho^{*2}_{i-1},..,\rho^{*2}_2,\rho^{*2}_1$ are the non-zero eigen values of $\Sigma_{11}^{-0.5}\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}\Sigma_{11}^{-0.5}$ and$\Sigma_{22}^{-0.5}\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\Sigma_{22}^{-0.5}$
+-   Canonical correlations are unchanged by standardization.
+
+## Correlation of Original and Canonical Variables
+
+The canonical variates and original variables have correlation matrices:
+
+-   $Cor(U,X) = Cov(AX,\widetilde\Sigma^{-1/2}_XX) = A \Sigma_X \widetilde\Sigma^{-1/2}_X$
+-   $Cor(U,Y) = Cov(AX; \widetilde\Sigma^{-1/2}_YY) = A \Sigma_{XY} \widetilde\Sigma^{-1/2}_Y$
+-   $Cor(V,X) = Cov(BY; \widetilde\Sigma^{-1/2}_XX) = B \Sigma_{YX} \widetilde\Sigma^{-1/2}_X$
+-   $Cor(V,Y) = Cov(BY; \widetilde\Sigma^{-1/2}_YY) = B \Sigma_Y \widetilde\Sigma^{-1/2}_Y$
+
+given that $Var(U_k) = Var(V_k) = 1 \forall k,l$ where - $\widetilde\Sigma_X = diag(\sqrt X)$ is a diagonal matrix containing X variances. - $\widetilde\Sigma_Y = diag(\sqrt Y)$ is a diagonal matrix containing Y variances.
+
+## Sample Canonical Correlation
+
+![Define](sample.png){width="450" height="400"}
+
+## Sample Properties
+
+![Proper](sample_1.png){width="400" height="400"}
+
+## Sample Canonical Correlation
+
+![Correlation](sample_2.png){width="400" height="400"}
+
+## Continued
+
+![Correlation](sample_3.png)
+
+## Continued
+
+![Correlation](sample_4.png)
+
+## Gemometrical Interpretation of CCA
+
+![Geometry](sample_5.png)
+
+## Continued
+
+![](sample_6.png){width="400" height="500"}
+
+## Continued
+
+![](sample_7.png)
+
+## Canonical Correlations for Sales Data
+
+```{r,out.height=9,out.width=9}
+library(knitr)
+# Perform Canonical Correlation Analysis
+cca_result <- cancor(sales_vars, test_scores)
+# Print the canonical correlations
+cat("Canonical Correlations:\n")
+print(cca_result$cor)
+
+```
+
+## Canonical Coefficients for Sales Data
+
+```{r}
+
+# Print canonical coefficients for each set
+cat("Canonical Coefficients for Sales Variables:\n")
+x_coef=cca_result$xcoef
+print(round(x_coef,3))
+cat("Canonical Coefficients for Test Scores:\n")
+y_coef=cca_result$ycoef[,-4]
+print(round(y_coef,3))
+```
+
+```{r,echo=FALSE}
+x_load <- cca_result$xcoef[, 1]
+U_1 <- rowSums(x_load * sales_vars)
+x_load
+U_1
+correlations_with_U1 <- sapply(1:ncol(sales_vars), function(i) cor(U_1, sales_vars[, i]))
+correlations_with_U1
+```
+
+```{r,echo=FALSE}
+y_load <- cca_result$ycoef[, 1]
+V_1 <- rowSums(y_load * test_scores)
+y_load
+V_1
+correlations_with_V1 <- sapply(1:ncol(test_scores), function(i) cor(V_1, test_scores[, i]))
+correlations_with_V1
+```
+
+```{r,echo=FALSE}
+correlations_with_x_2_U1 <- sapply(1:ncol(test_scores), function(i) cor(U_1, test_scores[, i]))
+correlations_with_x_2_U1
+
+correlations_with_x_1_V1 <- sapply(1:ncol(sales_vars), function(i) cor(V_1, sales_vars[, i]))
+correlations_with_x_1_V1
+
+```
+
+## 
+
+$$Thank$$ $$You!$$

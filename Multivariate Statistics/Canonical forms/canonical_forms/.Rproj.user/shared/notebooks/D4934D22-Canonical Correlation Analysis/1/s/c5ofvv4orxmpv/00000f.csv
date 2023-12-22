@@ -1,0 +1,71 @@
+"0","# Load required libraries"
+"0","library(MASS)"
+"0","library(knitr)"
+"0","library(ggplot2)"
+"0","library(GGally)"
+"2","Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2
+"
+"0","library(CCA)"
+"2","Loading required package: fda
+"
+"2","Loading required package: splines
+"
+"2","Loading required package: fds
+"
+"2","Loading required package: rainbow
+"
+"2","Loading required package: pcaPP
+"
+"2","Loading required package: RCurl
+"
+"2","Loading required package: deSolve
+"
+"2","
+Attaching package: ‘fda’
+
+"
+"2","The following object is masked from ‘package:graphics’:
+
+    matplot
+
+"
+"2","Loading required package: fields
+"
+"2","Loading required package: spam
+"
+"2","Spam version 2.9-1 (2022-08-07) is loaded.
+Type 'help( Spam)' or 'demo( spam)' for a short introduction 
+and overview of this package.
+Help for individual functions is also obtained by adding the
+suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
+"
+"2","
+Attaching package: ‘spam’
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    backsolve, forwardsolve
+
+"
+"2","Loading required package: viridisLite
+"
+"2","
+Try help(fields) to get started.
+"
+"0","# Set the working directory and read the data"
+"0","sales <- read.csv(""sales.csv"")"
+"0",""
+"0","# Define the variables for each set"
+"0","sales_vars <- sales[, c(""growth"", ""profit"", ""new"")]"
+"0","test_scores <- sales[, c(""create"", ""mech"", ""abs"", ""math"")]"
+"0","m=matcor(sales_vars,test_scores)"
+"0","kable(round(m$XYcor,2))"
+"2","Registered S3 methods overwritten by 'htmltools':
+  method               from         
+  print.html           tools:rstudio
+  print.shiny.tag      tools:rstudio
+  print.shiny.tag.list tools:rstudio
+"

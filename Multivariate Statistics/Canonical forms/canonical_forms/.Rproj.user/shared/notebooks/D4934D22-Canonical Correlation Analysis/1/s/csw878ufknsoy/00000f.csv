@@ -1,0 +1,6 @@
+"0","#Print the correlation"
+"0","library(corrplot)"
+"2","corrplot 0.92 loaded
+"
+"0","# Assuming you have already computed the correlation matrix and rounded it"
+"0","ggcorr(sales, method = c(""everything"", ""pearson""))"
