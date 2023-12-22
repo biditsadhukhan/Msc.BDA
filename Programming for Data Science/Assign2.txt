@@ -1,0 +1,31 @@
+1. 
+Specieswise tabulate number of missing values for the column root of the data frame rainforest (DAAG) Hint: use complete.cases
+2.
+For each column of the data frame Pima.tr2 (MASS ), determine the number of missing values, broken down by type.
+(a) with sapply, and subset command. 
+(b) with by
+(c) with group by 
+(d) with aggregate
+3.
+In the data frame rainforest (package - DAAG), use table(rainforest$species) to check the names and numbers of each species that are present in the data.
+
+4.
+Extract the following subsets from the data frame ais (DAAG): 
+(a) data for the rowers
+(b) data for the rowers, the netballers and the tennis players 
+(c) data for the female basketabllers and rowers
+
+5.
+Using the ais (DAAG) dataframe do the following:
+(a) recode wt column into a new categorical column such that there are equal (or almost equal) number of data in 10 equal sized intervals, name the intervals using a,b,c,...,etc. For example the result of applying the table function to the new column would given something as below:
+ a  b  c  d  e  f  g  h  i  j 20 20 21 19 22 18 21 19 21 20
+(Hint: use a combination of quantile and cut functions. Use quantile function to derive the breakpoints and then apply it to the cut function with appropriate labels to derive the new column)
+(b) create a new column with values given by the following condition:
+bmi more than 22.96 and lbm more than or equal to 63 and sport is NOT any of the following: B_Ball, Field, Gym then then the new column value is A otherwise B
+(Hint: check the use of %in% operator or match function and their inverse using ! operator)
+      (i) do the part (b) using mapply and named functions
+      (ii) do the part (b) w/o using mapply
+
+6.
+Using the dataframe ais (DAAG) create a new column using the sport column so that the "_" in the names is removed, i.e. B_Ball becomes BBall, etc. 
+(Hint: the sport column is a factor column and not a character column; use combination of strsplit, unlist and paste function if required or any other method of your choice)

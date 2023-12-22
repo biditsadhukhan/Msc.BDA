@@ -1,0 +1,80 @@
+grep('ab',c('abc','cd','cdab'),fixed = TRUE)
+grep('colour',c('color','colour'))
+grep('colou?r',c('colour','color'))
+grep('(..){4}', c('banana','cucumber'))
+grep('.*(..)\\1.?',c('banana','cucumcuber','jojoba','cucu'))
+grep('.*(..){4}.?',c('banana','cucumcuber','jojoba','cucu'))
+
+colnames(mtcars)
+mtcars[grep('^d.*',colnames(mtcars))]
+mtcars[grep('.*s.*',colnames(mtcars))]
+
+head(mtcars[grep('.*s.*',colnames(mtcars))])
+y <- strsplit(c('abc','cbc','dabccdbde'),'b',TRUE)
+y
+sapply(y,"[",2)
+sapply(list, function)
+
+?which
+?match
+1:10 %in% c(1,3,5,9)
+match(1:10,c(1,3,5,9))
+head(tab1)
+with(tab1, table(availability,region))
+
+which(tab1$area>1000)
+xt <- xtabs(~availability+region,tab1); prop.table(xt,2)
+xt
+library(dplyr)
+mtcars %>% select(!(starts_with('c') | ends_with('t'))) %>% head()
+
+mtcars %>% 
+  filter(mpg>30) %>%
+  select(!(starts_with('c') | ends_with('t'))) %>% 
+  tail(2)
+
+mtcars %>% 
+  filter(mpg>mean(mpg,na.rm=TRUE)) %>% 
+  select(starts_with('c') | ends_with('t') | mpg) %>%
+  head(2)
+
+
+mtcars %>% 
+  mutate(new_mpg = mpg>mean(mpg,na.rm=TRUE)) %>% 
+  head()
+
+my_mtcars <- mtcars %>% 
+  mutate(new_mpg = mpg>mean(mpg), new_disp=as.integer(disp)) %>%
+  select(mpg,disp,new_mpg,new_disp)
+
+head(my_mtcars)
+
+mtcars %>% mutate(new_mpg = mpg>mean(mpg), new_disp=round(disp,0)) %>%
+  select(mpg,disp,new_disp)
+
+table(mtcars$cyl)
+my_mtcars <- mtcars %>% 
+  mutate(cyl_fac = factor(cyl,labels = c('A','B','B'))) 
+levels(my_mtcars$cyl_fac)
+
+f3 <- function(x,y){
+  if (x>20 || y>200)
+    y/x
+  else
+    0
+}
+my_mtcars %>% 
+  mutate(new_var = mapply(f3,mpg,disp))
+
+with(mtcars,ifelse(mpg>20 | disp>200,disp/mpg,0))
+my_mtcars %>% 
+  mutate(new_var = ifelse(mpg>20 | disp>200,disp/mpg,0))
+
+
+mtcars %>% arrange(desc(mpg)) %>% head()
+mtcars %>% arrange(desc(cyl),gear,desc(disp)) %>%
+  select(cyl,gear,disp)
+
+mtcars %>% summarise(a = mean(disp),b=mean(mpg))
+mtcars %>% group_by(cyl,carb) %>% summarise(a = mean(disp),b=mean(mpg))
+mtcars %>% group_by(cyl,carb) %>% summarise(a = mean(disp),b=median(mpg))

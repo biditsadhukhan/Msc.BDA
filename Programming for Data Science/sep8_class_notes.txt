@@ -1,0 +1,61 @@
+v1 <- 1:10
+v1%%2==0
+tab1[tab1$area>800 & tab1$sale.price<200,]
+
+for (i in v1) print(i%%2==0)
+
+for (i in v1){
+  x <- i%%2==0
+  y <-x*2
+  print(y)
+}
+
+for (i in v1){
+  y <- 3
+  if(i%%2==0){
+    y <-x*2
+  }
+  print(y)
+}
+
+ifelse(v1%%2==0,'a','b')
+
+with(tab1,ifelse(region=='N',1,ifelse(region=='S',2,
+                                 ifelse(region=='E',3,4))))
+
+tab1$index2 <- vector('numeric',nrow(tab1)); head(tab1)
+tab1$index2[tab1$area>1000 & tab1$sale.price%%2==0] <- tab1$sale.price[tab1$area>1000 & tab1$sale.price%%2==0]/
+  tab1$area[tab1$area>1000 & tab1$sale.price%%2==0]
+
+
+f3 <- function(x,y){
+  if (x>1000 && y %%2==0)
+    y/x
+  else
+    0
+}
+tab1$index1 <-mapply(f3, tab1$area,tab1$sale.price)
+
+f1 <- function(x){
+  if(x%%2==0)
+    y <- 10
+  else
+    y <- x/2
+  return(y)
+}
+
+sapply(v1, f1)
+
+sapply(tab1$area, f1)
+tab1$area2 <- sapply(tab1$area, f1)
+
+tab1[sapply(tab1, is.numeric)]
+
+lapply(tab1[sapply(tab1, is.numeric)], function(x) max(x)-min(x))
+
+tapply(tab1$area,tab1$availability,length)
+tapply(tab1$area,tab1['availability'],length)
+tapply(unlist(tab1[1]),tab1['availability'],length)
+tapply(unlist(tab1[1]),tab1[3],length)
+
+

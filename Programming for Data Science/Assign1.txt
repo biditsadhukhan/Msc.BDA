@@ -1,0 +1,53 @@
+Q. How to find the structure of an R object?
+
+Q. Consider a vector of numbers, modify it by deleting all the elements in it which are even numbers.
+
+Q. Consider a vector of numbers, find the number of elements in it which are even numbers.
+
+Q. Find 2 ways to generate the following (explore the different options in the documentation for the function seq:
+1.00  3.25  5.50  7.75 10.00
+
+Q. WHat is the difference between the use of along.with and length.out parameters of the seq function - demonstrate with your own examples using a vector of characters.
+
+Q. consider the following vector:
+v1 <- c('a','b','c','a','c')
+generate another vector of same length which have the value 2 in those positions where there is 'a' and 0 for others. That is, output vector is 2 0 0 2 0
+
+Q. Interpret the output by inserting appropriate number of brackets in the espression:
+3 * 2 ^ T | 2 + 2 / 3 : 1
+
+Q. Create a matrix similar to m <- matrix(1:6, nrow = 4, ncol = 3)
+Modify the matrix by converting all numbers in the matrix divisible by 3 into 0.
+
+Q. Create a list having two components - a numeric vector and a character vector. Convert the list into a dataframe. Assign column names and rownames to this dataframe.
+
+Q. Create a matrix of 100 elements with 25 columns. The elements are single characters such as 'a', 'b', etc. Multiple elements of the matrix could be same value. Create another smaller matrix from this character matrix where only the elements which are neither 'a' nor 'b' from the original matrix are chosen. The new matrix should have the number of rows as a fraction of total number of elements extracted from the original matrix. For example if only 30 elements are extracted from original matrix then the new matrix could have 15 rows (approx a fraction 1/2). Attempt to create the second matrix in a single expression. You may start by using multiple steps then attempt to combine them together.
+
+Example:
+From 
+a b c f
+b d e f 
+
+the elements c,f,d,e,f are selected and a matrix with these elements are created having 5/2 rows i.e. 2 rows so something like this would be created
+d e f
+c f d
+
+Q. Using the character sub-matrix (smaller matrix) created in the earlier question convert it into a numeric matrix. Attempt the answer without doing individual character by character conversion as there could be a large number of different characters in the sub-matrix to be attempted individually. (Hint: try applying the concept of factor). Remember the result matrix should have the same structure as the character sub-matrix.
+Example:
+
+The above character submatrix would produce something like this:
+1 2 3
+4 3 1
+
+Q. The numeric matrix generated above should have the numbers assigned to the characters starting from 10. That is no number should be less than 10 and the least number assigned should be 10.
+10 11 12
+13 12 10
+
+(see if the above two questions can be done in a single expression)
+
+
+
+
+
+
+

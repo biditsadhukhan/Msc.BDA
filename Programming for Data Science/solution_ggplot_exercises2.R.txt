@@ -1,0 +1,181 @@
+# Q1.
+by(airquality,airquality$Month,function(x) sum(!complete.cases(x)))
+table(airquality$Month,complete.cases(airquality))[,1]
+library(dplyr)
+airquality %>% group_by(Month,cc = is.na(Ozone) | 
+                          is.na(Solar.R) |
+                          is.na(Wind) |
+                          is.na(Temp)) %>% 
+  summarise(n()) %>% filter(cc==TRUE)
+
+# Q2.
+aq <- airquality %>% mutate(newtemp=ifelse(Temp>86.8,'extreme',
+                                           ifelse(Temp>76.5,'high',
+                                                  ifelse(Temp>66.2,'medium','low')))) 
+table(aq$newtemp)
+
+f1 <- function(x){
+  if(x>86.8)
+    'extreme'
+  else if(x>76.5)
+    'high'
+  else if(x>66.2)
+    'medium'
+  else
+    'low'
+}
+aq <- aq %>% mutate(newtemp2=sapply(Temp, f1))
+table(aq$newtemp2)
+
+aq$newtemp3 <- with(airquality, cut(Temp,seq(min(Temp),max(Temp),(max(Temp)-min(Temp))/4),
+                                    right = F, include.lowest = T,
+                                    labels =c('low','medium','high','extreme') ))
+table(aq$newtemp3)
+
+aq$newtemp4[aq$Temp>86.8]<-'extreme'
+aq$newtemp4[aq$Temp<=86.8 & aq$Temp>76.5]<-'high'
+aq$newtemp4[aq$Temp<=76.5 & aq$Temp>66.2]<-'medium'
+aq$newtemp4[aq$Temp<=66.2]<-'low'
+table(aq$newtemp4)
+
+aq$newtemp5<- replace(aq$newtemp5,aq$Temp>86.8,'extreme')
+aq$newtemp5<- replace(aq$newtemp5,aq$Temp<=86.8 & aq$Temp>76.5,'high')
+aq$newtemp5<- replace(aq$newtemp5,aq$Temp<=76.5 & aq$Temp>66.2,'medium')
+aq$newtemp5<- replace(aq$newtemp5,aq$Temp<=66.2,'low')
+table(aq$newtemp5)
+
+# Q3.
+aq <- aq %>% mutate(Ozone=ifelse(is.na(Ozone),mean(Ozone,na.rm = T),Ozone))
+
+# Q4.
+#(i) dplyr
+aq <- airquality
+aq <- aq %>% group_by(Month) %>% 
+  mutate(Ozone2=ifelse(is.na(Ozone),mean(Ozone,na.rm = T),Ozone)) %>% 
+  ungroup()   # ungrouping re-expands the groups
+sum(is.na(aq$Ozone)) #verify
+sum(is.na(aq$Ozone2))  #verify
+aq[aq$Month==7,]   #verify
+
+#(ii) subset
+aq$newOz <- NA
+m5 <- subset(aq,Month==5)
+m6 <- subset(aq,Month==6)
+m7 <- subset(aq,Month==7)
+m8 <- subset(aq,Month==8)
+m9 <- subset(aq,Month==9)
+m5$newOz<- ifelse(is.na(m5$Ozone),mean(m5$Ozone,na.rm = T),m5$Ozone)
+m6$newOz<- ifelse(is.na(m6$Ozone),mean(m6$Ozone,na.rm = T),m6$Ozone)
+m7$newOz<- ifelse(is.na(m7$Ozone),mean(m7$Ozone,na.rm = T),m7$Ozone)
+m8$newOz<- ifelse(is.na(m8$Ozone),mean(m8$Ozone,na.rm = T),m8$Ozone)
+m9$newOz<- ifelse(is.na(m9$Ozone),mean(m9$Ozone,na.rm = T),m9$Ozone)
+aq2 <- rbind(m5,m6,m7,m8,m9)
+aq2[aq2$Month==7,]   # verify
+#(iii) aggregate and ifelse
+aqb <- aggregate(Ozone ~ Month, airquality, mean,na.rm=T)
+aqb
+aq$newOz<-ifelse(aq$Month==5,aqb$Ozone[aqb$Month==5],
+                 ifelse(aq$Month==6,aqb$Ozone[aqb$Month==6],
+                        ifelse(aq$Month==7,aqb$Ozone[aqb$Month==7],
+                               ifelse(aq$Month==8,aqb$Ozone[aqb$Month==8],
+                                      aqb$Ozone[aqb$Month==9] 
+                               ))))
+
+aq$newOz <- ifelse(!is.na(aq$Ozone),aq$Ozone,aq$newOz)
+aq[aq$Month==7,]  #verify
+#(iv) aggregate and mapply
+aqb <- aggregate(Ozone ~ Month, airquality, mean,na.rm=T); aqb
+f1 <- function(x,y){
+  ifelse(is.na(x),aqb$Ozone[aqb$Month==y],x)
+}
+aq$newOz2 <- mapply(f1, aq$Ozone,aq$Month)
+aq[aq$Month==7,]   #verify
+#(v) tapply and custom function - however this method will work if
+#the rows are arranged in ascending order of Month column so ordering is first step
+aq <- aq[order(aq$Month),]
+f1 <- function(x){
+  mn = round(mean(x, na.rm = T),0)  #rounding done
+  ifelse(is.na(x),mn,x)
+}
+aq$newOz3 <- unlist(tapply(aq$Ozone, aq$Month , f1))
+aq[aq$Month==7,]  # verify
+
+# Q5.
+aq[order(aq$Month,aq$Temp),]
+
+# Q6.
+library(ggplot2)
+ggplot(mpg) + geom_bar(aes(manufacturer,fill=manufacturer))
+
+# Q7.
+ggplot(mpg) + geom_bar(aes(manufacturer,fill=model)) + coord_flip()
+
+# Q8.
+ggplot(mpg) + geom_bar(aes(reorder(manufacturer,manufacturer,NROW),
+                           fill=manufacturer)) + coord_flip() +
+  xlab("manufacturer")
+
+# Q9.
+ggplot(mpg,aes(manufacturer,model)) + geom_count(aes(color=manufacturer)) +
+  theme(axis.text.x = element_text(angle = 90, color='blue'))
+
+# Q10.
+mpg %>% group_by(manufacturer,model) %>% summarise(n())
+with(mpg,table(manufacturer,model))
+
+install.packages("reshape")  # in case reshape package not installed
+library(reshape)  
+df1 <- melt(with(mpg,table(manufacturer,model)))
+df1[df1$value!=0,]  # choose only those combinations which have non-zero count
+
+# Q11.
+ggplot(mpg,aes(manufacturer,model)) + 
+  geom_count(aes(color=manufacturer)) +
+  theme(axis.text.x = element_text(angle = 90, color='blue')) +
+  annotate("text",x='dodge',y='caravan 2wd', 
+           label = "largest group", color = 'magenta',
+           alpha = 0.6) +
+  annotate("text",x=c(5),y=c(10), 
+           label = "largest group", color = 'blue',
+           alpha = 0.6) +
+  annotate("text",x=c(13),y=c(24), 
+           label = "largest group", color = 'dark orange',
+           alpha = 0.6)
+
+# Q12.
+ggplot(airquality,aes(Month,Day)) + geom_raster(aes(fill=Temp)) +
+  scale_fill_gradient(low='yellow',high='red')
+
+# Q13.
+library(ggplot2movies)
+m <- ggplot(movies, aes(y = votes, x = rating, group = cut_width(rating, 0.5)))
+m + geom_violin()
+m + geom_violin() + scale_y_log10()
+m + geom_violin(aes(fill=cut_width(rating, 0.5))) + scale_y_continuous(trans = "log10")
+m + geom_violin() + scale_y_continuous(trans = "reciprocal")
+m + geom_violin() + scale_y_continuous(trans = "sqrt")
+m + geom_violin() + scale_y_continuous(trans = scales::sqrt_trans())
+m + geom_violin() + ylim(0,20)
+m + geom_violin() + coord_trans(y = "log10")
+
+# Q14.
+ggplot(movies,aes(votes)) + geom_area(stat="bin" , fill = 'red',color=NA) +
+  xlim(0,200)
+ggplot(movies,aes(votes)) + geom_area(stat="bin" , fill = 'red',color=NA) +
+  scale_x_continuous(trans="log10")  
+
+# Q15.
+lapply(mpg,table)  # use this to get a rough idea of which columns have less than 6 levels
+mynamestheme <- theme(plot.title = element_text(family = "Helvetica", face = "bold", size = (15)), 
+                      legend.title = element_text(colour = "steelblue",  face = "bold.italic", family = "Helvetica"), 
+                      legend.text = element_text(face = "italic", colour="steelblue4",family = "Helvetica"), 
+                      axis.title = element_text(family = "Helvetica", size = (10), colour = "steelblue4"),
+                      axis.text = element_text(family = "Courier", colour = "cornflowerblue", size = (10)),
+                      axis.ticks.x = element_line(color = 'red',size=1),
+                      axis.text.x = element_text(family = "Courier", colour = "red", size = (10),angle=90),
+                      axis.title.x = element_text(family = "Courier", colour = "red", size = (10))
+                      )
+ggplot(mpg,aes(cty,hwy)) + 
+  geom_jitter(aes(shape=factor(cyl),color=factor(cyl))) +
+  xlab('city miles per gallon') + mynamestheme
+

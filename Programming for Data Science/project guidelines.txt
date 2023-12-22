@@ -1,0 +1,35 @@
+
+1. Basic analysis of the features as is - descriptive statistics (mean, median, mode, cross tabulation, skewness, etc.) and basic plots (include only those plots in your report which gives some non-trivial insight / understanding of the data or highlights some pecularities in the data that might be useful to the reader.
+-have at least a few of each type of the following plots:
+	-single variable plots - continuous (c) & discrete (d)
+	-2 variable plots - (c)(c), (d)(d),(c)(d)
+	-more than 2 variables - exploiting the different aspects of the plot - color, shape, alpha, size, line type, etc.
+	-faceting / grid plots
+	-bar plots, line plots, histograms, box plots, violin plots, area plot, qq plot, count plot, smooth curve fitting plot, rug plot
+	-explore more advanced plots if you can such as contour plot, polar coordinate plot
+
+2. Building new features (you may call it feature engg) by:
+	-recoding existing features - categorical to categorical, numerical to categorical, 
+	-deriving new features using mathematical expressions, logical conditions, etc.
+
+3. Identification of missing values and appropriately substituting the missing values (mean, median substitution in case of numerical features and modal value or a new different category / level in case of categorical variables).
+
+4. Plot using the new features created in step 2 and after missing value substitution in step 3 (include only important, insightful plots). Important thing would be identify if some new peculiarity / insight was derived compared to what was already known after step 1.
+
+5. Each plot included in the report should have an accompanying "sentence of insight / explanation".
+
+6. Generate the final report having the following:
+(a) PPT including only the important set of plots and descriptive statistics and insights.
+(b) Detailed project report (superset of the material in the PPT) - explanation, plots, insights, conclusion, future scope of work
+(c) Annotated code (all the R code required to generate each descriptives, plots) include the plot / figure no. as code comments so that it is easy to identify which code corresponds to which plot, descriptives, etc.
+
+
+Evaluation:
+- marks would be given for original work (any plagiarism would be detected and appropriately penalised).
+- there will be weightage for usefulness of the plots, elegance of the plots, clarity of the plots and variety of plots. Remember best plots reveal information just by looking at them and are self explanatory. It might be a good idea to get a few of your plots tested by a friend / batchmate. Ask if he can understand your plot without any explanation.
+- 50% marks for plots and descriptives, 30% for creation of new features and missing value analysis, 20% for report and presentation.
+- remember to include only the important plots in your report / presentation
+
+
+
+

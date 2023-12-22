@@ -1,0 +1,68 @@
+library(dplyr)
+library(ggplot2)
+corp_data = read.csv("corp_data.csv")
+corp_data
+#basic version - step 1
+ggplot(corp_data,aes(company.name,profit)) + geom_bar(stat = 'identity') +
+  coord_flip()
+#improvement step 2 - reordered axis & title case (can be improved further)
+title_case <- function(x){
+  paste0(toupper(substr(x,1,1)),substr(x,2,nchar(x)))
+}
+ggplot(corp_data,aes(x=reorder(title_case(company.name),profit),profit)) + geom_bar(stat = 'identity') +
+  coord_flip()
+
+
+#improvement step 3 - colors, fonts, family, background, grid, etc.
+mytheme <- theme(panel.grid.major.y = element_blank(),
+                 panel.grid.minor.y = element_blank(),
+                 axis.text.x = element_blank(),
+                 axis.title = element_blank(),
+                 panel.background = element_rect(fill='white'),
+                 panel.grid.major = element_line(size = 0.1, linetype = 'solid',
+                                                 colour = "grey"), 
+                 axis.ticks = element_blank(),
+                 axis.text.y = element_text(color='black',size=10,
+                                            family='Helvetica',
+                                            margin=margin(0, 2, 0, 0, "pt"))
+)
+ggplot(corp_data,aes(x=reorder(title_case(company.name),profit),profit)) + 
+  geom_bar(stat = 'identity',fill='lightblue') +
+  coord_flip() + mytheme
+  
+#improvement step 4 - y-axis tick labels, title, subtitle, grid line spacing
+#absolute positioning of the titles and subtitles and convert the entire
+#plot program to a function for later reuse
+corp_data <- within(corp_data,{
+  cname_new <- paste(title_case(company.name),'.....',
+                     format(profit,big.mark=',',scientific=FALSE),sep='')
+})
+#head(corp_data)
+plot_data <- function(xaxis_col){
+ggplot(corp_data,aes(x=reorder(xaxis_col,profit),profit)) + 
+  geom_bar(stat = 'identity',fill='lightblue') +
+  coord_flip() + mytheme + 
+  labs(title = "20 most profitable listed firms", 
+       subtitle = "Reported PAT (Rs crore)") +
+  theme(plot.title = element_text(family = "Helvetica", 
+                                  face = "bold", 
+                                  size = (15),
+                                  vjust = 1,
+                                  hjust = -5.5),
+        plot.subtitle = element_text(family = 'Helvetica',
+                                     hjust = -1.15)) +
+  scale_y_continuous(breaks = with(corp_data,
+                                   seq(0,max(profit),by=max(profit)/5)))
+}
+plot_data(corp_data$cname_new)
+#improvement step 5 - polishing the company names in a scalable manner
+names_to_capitalize <- c('LIC','SBI','TCS','HDFC','ONGC',
+                         'ITC',"ICICI",'HCL','NTPC','M&M')
+corp_data$cname_new2 <- corp_data$cname_new
+for (i in 1:length(names_to_capitalize)){
+  corp_data$cname_new2 <- sub(names_to_capitalize[i],
+                            names_to_capitalize[i],
+                            corp_data$cname_new2,ignore.case = TRUE)
+}
+plot_data(corp_data$cname_new2)
+head(corp_data)

@@ -1,0 +1,91 @@
+# Q1. 
+# Specieswise tabulate number of missing values for the column root of the
+# data frame rainforest (DAAG) Hint: use complete.cases
+library(DAAG)
+sum(complete.cases(rainforest$root)) # method 1
+sum(is.na(rainforest$root))  # method 2
+with(DAAG:: rainforest,table(species[!complete.cases(root)]))
+
+# Q2.
+# For each column of the data frame Pima.tr2 (MASS ), determine the number 
+# of missing values, broken down by type.
+# (a) with sapply, and subset command. 
+# (b) with by
+# (c) with group by 
+# (d) with aggregate
+library(MASS)
+library(dplyr)
+nrow(Pima.tr2)
+cna <- function(x) sum(is.na(x))
+aggregate(Pima.tr2, by=list(Pima.tr2$type), FUN=cna)
+by(Pima.tr2, Pima.tr2$type, function(x) sapply(x, cna))
+Pima.tr2 %>% group_by(type) %>% summarise_all(cna)
+l1 <- levels(factor(Pima.tr2$type))
+sapply(subset(Pima.tr2,Pima.tr2$type == l1[1]),cna)
+sapply(subset(Pima.tr2,Pima.tr2$type == l1[2]),cna)
+
+# Q3.
+# In the data frame rainforest (package - DAAG), use table(rainforest$species)
+# to check the names and numbers of each species that are present in the data.
+table(rainforest$species)
+
+# Q4. 
+# Extract the following subsets from the data frame ais (DAAG): 
+#  (a) data for the rowers
+#  (b) data for the rowers, the netballers and the tennis players 
+#  (c) data for the female basketabllers and rowers
+table(ais$sport)[5]
+attributes(table(ais$sport))$dimnames[[1]][5]
+atr1 <- attributes(table(ais$sport))$dimnames[[1]][5]
+subset(ais,ais$sport == 'Row')  # hardcoding / manual approach 
+subset(ais,ais$sport == atr1) # better approach / auto / programmatic approach
+atr2 <- attributes(table(ais$sport))$dimnames[[1]][c(4,5,9)]
+subset(ais,ais$sport %in% atr2)
+#another simpler but less scalable / elegant approach
+subset(ais,
+       ais$sport == "Row" | ais$sport == "Tennis" | ais$sport == "Netball")
+# dplyr approach
+ais %>% 
+  filter(ais$sport == "Row" | 
+           ais$sport == "Tennis" | ais$sport == "Netball")
+ais %>% filter(ais$sport %in% atr2)
+subset(ais,(sport=="B_Ball" & sex=='f') | (sport=="Row"))
+
+# Q4.
+# Using the ais (DAAG) dataframe do the following:
+#  (a) recode wt column into a new categorical column...
+# ...
+brks <- quantile(ais$wt,probs = seq(0,1,0.1)); brks
+table(cut(ais$wt,breaks = brks, labels = letters[1:10]))
+f6 <- function(x,y,z){
+  if(x>22.96 && y>=63 && !(z  %in% c("B_Ball",'Field','Gym')))
+    'A'
+  else
+    'B'
+}
+table(with(ais,mapply(f6,bmi,lbm,sport)))
+# one suggested approach w/o mapply (other approaches possible)
+table(with(ais,ifelse(bmi > 22.96 & lbm >= 63 &  
+         !(sport  %in% c("B_Ball",'Field','Gym')),'A','B')))
+
+# Q6.
+# Using the dataframe ais (DAAG) create a new column using the sport column
+# so that the "_" ...
+my_ais <- ais
+f6 <- function(x){
+  t = paste(unlist(strsplit(x,"_")),collapse = "")
+  return(t)
+}
+my_ais$sport2 <- sapply(as.character(ais$sport), f6)
+# verify if results correct
+table(my_ais$sport)
+table(my_ais$sport2)
+
+# another simpler approach
+sub("_","",c('an_c','a_sc','abc_s')) # or gsub function
+my_ais$sport3 <- sapply(as.character(ais$sport), 
+                        function(x) sub("_","",x))
+# verify correctness
+table(my_ais$sport3)
+
+
